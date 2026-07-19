@@ -1,0 +1,48 @@
+{
+  "name": "mv3-doctor",
+  "version": "0.1.0",
+  "description": "Diagnose Chrome Manifest V3 extension pitfalls — and teach AI coding agents to avoid them.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "mv3-doctor": "./dist/cli.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "SKILL.md",
+    "references",
+    "recipes"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "chrome-extension",
+    "manifest-v3",
+    "mv3",
+    "lint",
+    "linter",
+    "service-worker",
+    "browser-extension",
+    "claude",
+    "ai-agent",
+    "skill"
+  ],
+  "dependencies": {
+    "acorn": "^8.17.0",
+    "acorn-walk": "^8.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
+}

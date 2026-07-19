@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Well-behaved Extension",
+  "version": "1.0.0",
+  "action": {
+    "default_title": "Well-behaved"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage", "alarms"],
+  "host_permissions": ["https://api.example.com/*"]
+}
