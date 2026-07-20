@@ -12,19 +12,7 @@ to avoid them in the first place.
 npx mv3-doctor path/to/extension
 ```
 
-```
-background.js
-  warning 3:5     "requestCount" holds state in memory, but the service worker is restarted regularly — the value resets without warning.  no-mutable-module-state-in-service-worker
-          → Persist it with chrome.storage.session (or .local) and read it back at the start of each listener.
-  error   6:1     setInterval() in a service worker stops firing as soon as the worker is terminated.  no-timers-in-service-worker
-          → Use chrome.alarms.create() — alarms wake the worker back up.
-
-manifest.json
-  error   18:1    The "webRequestBlocking" permission has no effect in Manifest V3.  no-mv2-keys
-          → Removed in MV3. Use "declarativeNetRequest" to block or redirect requests.
-
-14 problems (11 errors, 3 warnings)
-```
+![mv3-doctor flagging service-worker and manifest bugs in a demo extension](./assets/demo.gif)
 
 ## Why this exists
 
