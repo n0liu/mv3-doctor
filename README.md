@@ -55,7 +55,7 @@ Or add it to a project:
 npm install --save-dev mv3-doctor
 ```
 
-Requires Node 18+.
+Requires Node 20+.
 
 ## Usage
 
