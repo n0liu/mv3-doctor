@@ -112,6 +112,31 @@ describe("findings", () => {
   });
 });
 
+describe("scope awareness", () => {
+  it("does not report locals that shadow a page-only global", async () => {
+    const findings = inFile(await run("shadowing"), "background.js").filter(
+      (finding) => finding.ruleId === "no-dom-in-service-worker",
+    );
+    expect(findings).toEqual([]);
+  });
+
+  it("reports destructured module state", async () => {
+    const messages = inFile(await run("shadowing"), "background.js")
+      .filter((finding) => finding.ruleId === "no-mutable-module-state-in-service-worker")
+      .map((finding) => finding.message)
+      .join(" ");
+    expect(messages).toContain("pendingCount");
+  });
+
+  it("does not treat a parameter shadowing a module binding as module state", async () => {
+    const messages = inFile(await run("shadowing"), "background.js")
+      .filter((finding) => finding.ruleId === "no-mutable-module-state-in-service-worker")
+      .map((finding) => finding.message)
+      .join(" ");
+    expect(messages).not.toContain("cache");
+  });
+});
+
 describe("suppression comments", () => {
   it("silences only the following line", async () => {
     const result = await run("suppressed");

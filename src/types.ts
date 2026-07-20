@@ -1,4 +1,5 @@
 import type { Program } from "acorn";
+import type { ScopeManager } from "eslint-scope";
 
 export type Severity = "error" | "warning" | "info";
 
@@ -70,6 +71,8 @@ export interface SourceRuleContext {
   readonly file: SourceFile;
   /** Guaranteed non-null — the engine skips files it could not parse. */
   readonly ast: Program;
+  /** null when scope analysis failed; scope-aware rules skip in that case. */
+  readonly scopeManager: ScopeManager | null;
   readonly manifest: ManifestFile;
 }
 

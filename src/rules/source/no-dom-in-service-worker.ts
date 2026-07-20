@@ -1,4 +1,4 @@
-import { findGlobalIdentifiers } from "../ast-utils.js";
+import { findGlobalReferences } from "../../scope.js";
 import type { SourceRule } from "../../types.js";
 
 /** Globals that exist on a page but not in a service worker's global scope. */
@@ -18,10 +18,15 @@ export const noDomInServiceWorker: SourceRule = {
   roles: ["service-worker"],
   description: "Flags DOM and page-only globals that throw inside a service worker.",
 
-  check({ ast }) {
+  check({ scopeManager }) {
+    // Scope analysis is what distinguishes the real global `document` from a
+    // local variable or parameter that merely shares the name. Without it we
+    // would rather report nothing than guess and produce false positives.
+    if (!scopeManager) return [];
+
     const names = Object.keys(UNAVAILABLE_GLOBALS);
 
-    return findGlobalIdentifiers(ast, names).map((match) => ({
+    return findGlobalReferences(scopeManager, names).map((match) => ({
       message: `"${match.name}" is not available in a service worker and will throw at runtime.`,
       hint: UNAVAILABLE_GLOBALS[match.name],
       line: match.line,

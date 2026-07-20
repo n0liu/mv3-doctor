@@ -1,5 +1,6 @@
 import { DISABLE_FILE, DISABLE_NEXT_LINE, docsUrlFor } from "./constants.js";
 import type { LoadedExtension } from "./loader.js";
+import { analyzeScopes } from "./scope.js";
 import type {
   DiagnoseResult,
   Finding,
@@ -98,11 +99,15 @@ const checkSourceFile = (
   }
 
   const suppressed = suppressedLines(file.text);
+  // Built once per file and shared, since scope analysis is not free.
+  const scopeManager = analyzeScopes(ast);
 
   return rules
     .filter((rule) => !rule.roles || rule.roles.includes(file.role))
     .flatMap((rule) =>
-      runRule(rule, file.path, () => rule.check({ file, ast, manifest: extension.manifest })),
+      runRule(rule, file.path, () =>
+        rule.check({ file, ast, scopeManager, manifest: extension.manifest }),
+      ),
     )
     .filter((finding) => finding.line === undefined || !suppressed.has(finding.line));
 };

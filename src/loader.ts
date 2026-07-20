@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, realpath } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve } from "node:path";
 import { parse, type Program } from "acorn";
 import type { FileRole, ManifestFile, SourceFile } from "./types.js";
@@ -93,7 +93,8 @@ export const collectScriptRefs = (manifestJson: Record<string, unknown>): readon
 export const parseScript = (text: string): Program | null => {
   for (const sourceType of ["module", "script"] as const) {
     try {
-      return parse(text, { ecmaVersion: "latest", sourceType, locations: true });
+      // `ranges` is required by eslint-scope; `locations` gives findings their line.
+      return parse(text, { ecmaVersion: "latest", sourceType, locations: true, ranges: true });
     } catch {
       // Try the other source type before giving up.
     }
@@ -129,19 +130,56 @@ export const loadManifest = async (extensionRoot: string): Promise<ManifestFile>
   return { absolutePath, path: MANIFEST_FILENAME, raw, json };
 };
 
+type CanonicalResult =
+  | { readonly kind: "ok"; readonly path: string }
+  | { readonly kind: "missing" }
+  | { readonly kind: "escaped" };
+
+/**
+ * Re-checks a path after symlinks are resolved. The lexical guard in
+ * `resolveWithinRoot` cannot see a symlink that points outside the root, so we
+ * canonicalize both and confirm the real target is still contained.
+ */
+const canonicalWithinRoot = async (
+  realRoot: string,
+  absolutePath: string,
+): Promise<CanonicalResult> => {
+  let realPath: string;
+  try {
+    realPath = await realpath(absolutePath);
+  } catch {
+    return { kind: "missing" };
+  }
+  const rel = relative(realRoot, realPath);
+  if (rel === "" || rel.startsWith("..") || isAbsolute(rel)) return { kind: "escaped" };
+  return { kind: "ok", path: realPath };
+};
+
 export const loadExtension = async (extensionRoot: string): Promise<LoadedExtension> => {
   const root = resolve(extensionRoot);
   const manifest = await loadManifest(root);
+  const realRoot = await realpath(root);
 
   const sources: SourceFile[] = [];
   const missing: string[] = [];
 
   for (const ref of collectScriptRefs(manifest.json)) {
-    const absolutePath = resolveWithinRoot(root, ref.relPath);
-    if (!absolutePath) {
+    const lexicalPath = resolveWithinRoot(root, ref.relPath);
+    if (!lexicalPath) {
       missing.push(`${ref.relPath} (refused: path escapes the extension directory)`);
       continue;
     }
+
+    const canonical = await canonicalWithinRoot(realRoot, lexicalPath);
+    if (canonical.kind === "escaped") {
+      missing.push(`${ref.relPath} (refused: symlink resolves outside the extension directory)`);
+      continue;
+    }
+    if (canonical.kind === "missing") {
+      missing.push(ref.relPath);
+      continue;
+    }
+    const absolutePath = canonical.path;
 
     let text: string;
     try {
