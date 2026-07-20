@@ -4,16 +4,22 @@
   "description": "Diagnose Chrome Manifest V3 extension pitfalls — and teach AI coding agents to avoid them.",
   "type": "module",
   "license": "MIT",
+  "author": "n0liu (https://github.com/n0liu)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/n0liu/mv3-doctor.git"
+  },
+  "homepage": "https://github.com/n0liu/mv3-doctor#readme",
+  "bugs": "https://github.com/n0liu/mv3-doctor/issues",
   "bin": {
-    "mv3-doctor": "./dist/cli.js"
+    "mv3-doctor": "dist/cli.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "SKILL.md",
-    "references",
-    "recipes"
+    "references"
   ],
   "engines": {
     "node": ">=20"
