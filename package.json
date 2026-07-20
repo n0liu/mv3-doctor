@@ -27,8 +27,10 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
+    "lint": "oxlint src test --ignore-pattern='test/fixtures/**' --deny-warnings",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage --coverage.provider=v8 --coverage.include='src/**' --coverage.exclude='src/cli.ts' --coverage.thresholds.lines=85 --coverage.thresholds.statements=85 --coverage.thresholds.functions=90 --coverage.thresholds.branches=65"
   },
   "keywords": [
     "chrome-extension",
@@ -50,6 +52,8 @@
   "devDependencies": {
     "@types/estree": "^1.0.9",
     "@types/node": "^26.1.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "oxlint": "^1.74.0",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }
