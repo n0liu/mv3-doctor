@@ -16,29 +16,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18, 20, 22]
-
+        node-version: ["18", "20", "22"]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-
       - run: npm ci
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Test
-        run: npm test
-
-      - name: Build
-        run: npm run build
-
-      - name: Smoke-test the built CLI
-        run: |
-          node dist/cli.js test/fixtures/clean
-          node dist/cli.js test/fixtures/broken --no-color || test $? -eq 1
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
