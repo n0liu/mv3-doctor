@@ -6,3 +6,6 @@ coverage/
 
 # Agent scratch files
 .scratch/
+
+# Internal launch copy — not for the public repo
+assets/launch-kit.md

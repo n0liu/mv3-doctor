@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Leaky Extension",
+  "version": "1.0.0",
+  "description": "A tiny extension that works in testing and breaks in the field.",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["webRequestBlocking", "storage"]
+}

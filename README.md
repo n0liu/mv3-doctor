@@ -1,5 +1,10 @@
 # mv3-doctor
 
+[![npm](https://img.shields.io/npm/v/mv3-doctor.svg)](https://www.npmjs.com/package/mv3-doctor)
+[![CI](https://github.com/n0liu/mv3-doctor/actions/workflows/ci.yml/badge.svg)](https://github.com/n0liu/mv3-doctor/actions/workflows/ci.yml)
+[![downloads](https://img.shields.io/npm/dm/mv3-doctor.svg)](https://www.npmjs.com/package/mv3-doctor)
+[![license](https://img.shields.io/npm/l/mv3-doctor.svg)](./LICENSE)
+
 Diagnose Chrome **Manifest V3** extension pitfalls — and teach AI coding agents
 to avoid them in the first place.
 
